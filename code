@@ -1,0 +1,52 @@
+import logging
+from telegram import Update
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
+
+# Set up logging
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Define your API token
+TOKEN = "your_bot_token_here"
+
+# Function to handle the /start command
+def start(update: Update, context: CallbackContext) -> None:
+    update.message.reply_text('Hello! I am your keyword-based search bot.')
+
+# Function to handle normal text messages
+def search_keywords(update: Update, context: CallbackContext) -> None:
+    # Get the text message sent by the user
+    user_input = update.message.text.lower()
+
+    # Add your keyword-based search logic here
+    if "keyword1" in user_input:
+        result = "Information related to keyword1."
+    elif "keyword2" in user_input:
+        result = "Information related to keyword2."
+    else:
+        result = "No relevant information found."
+
+    # Send the result back to the user
+    update.message.reply_text(result)
+
+def main() -> None:
+    # Set up the Updater with your bot's token
+    updater = Updater(TOKEN)
+
+    # Get the dispatcher to register handlers
+    dp = updater.dispatcher
+
+    # Register command handlers
+    dp.add_handler(CommandHandler("start", start))
+
+    # Register a message handler for normal text messages
+    dp.add_handler(MessageHandler(Filters.text & ~Filters.command, search_keywords))
+
+    # Start the Bot
+    updater.start_polling()
+
+    # Run the bot until you send a signal to stop
+    updater.idle()
+
+if __name__ == '__main__':
+    main()
